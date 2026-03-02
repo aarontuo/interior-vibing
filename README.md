@@ -1,79 +1,59 @@
-# Interior Vibing 🏠
+# Interior Vibing
 
-AI-powered interior design renderings that solve real problems. Upload a room photo, get a professional redesign with a click-through presentation deck.
+Claude code skill. Upload a room photo. Get a redesign rendering and a polished presentation deck — room analysis, before/after, shopping list, ROI estimates. Every recommendation is specific to your room's architecture, your goal, and real purchasable items with prices.
 
-**Not generic "modern living room" output.** Every recommendation is specific to your room's architecture, your goal, and real purchasable items with prices.
+<p align="center">
+  <img src="assets/demo.gif" alt="Interior Vibing demo — room photo to presentation deck" width="720">
+</p>
 
-## What It Does
+## How It Works
 
-1. You upload a room photo
-2. AI analyzes the space (dimensions, materials, light, fixed elements)
-3. You say what you need (Airbnb staging, rental appeal, home sale, personal refresh)
+1. Upload a room photo
+2. Say what you need — Airbnb staging, rental appeal, home sale, personal refresh
+3. The skill analyzes your space (dimensions, materials, light, fixed elements)
 4. Gemini generates a photorealistic redesign rendering
-5. You get a polished presentation deck with before/after, analysis, shopping list, and ROI estimates
-
-## Demo
-
-```
-You: [uploads bedroom.jpg] "Stage this for Airbnb, warm Scandinavian style, $1,500 budget"
-
-Interior Vibing:
-  → Analyzes room: 12×14, north-facing, oak floors, bare walls
-  → Writes specific prompt (not "nice modern bedroom")
-  → Generates 2K redesign rendering via Gemini
-  → Produces 8-slide presentation deck:
-    Slide 1: Title (room photo as background)
-    Slide 2: Before photo
-    Slide 3: Room analysis (stats + best asset / biggest problem)
-    Slide 4: Design concept (style + color palette)
-    Slide 5: After rendering
-    Slide 6: Before → After comparison
-    Slide 7: Shopping list (items ranked by ROI)
-    Slide 8: Investment summary (budget tiers + payback)
-```
+5. You get an 8-slide click-through deck: before/after, analysis, shopping list, budget tiers
 
 ## Install
 
 ### Claude Code
 
 ```bash
-# Option 1: Clone directly into your skills directory
-git clone https://github.com/yourusername/interior-vibing.git ~/.claude/skills/interior-vibing
+# Clone into your skills directory
+git clone https://github.com/aarontuo/interior-vibing.git ~/.claude/skills/interior-vibing
 
-# Option 2: Clone into a project
-git clone https://github.com/yourusername/interior-vibing.git
+# Or clone into a project
+git clone https://github.com/aarontuo/interior-vibing.git
 cp -r interior-vibing my-project/.claude/skills/interior-vibing
 
-# Option 3: agent-skills-cli (works with Cursor, VS Code, etc.)
-npx agent-skills-cli add yourusername/interior-vibing
+# Or use agent-skills-cli (works with Cursor, VS Code, etc.)
+npx agent-skills-cli add aarontuo/interior-vibing
 ```
 
 ### Claude.ai (Projects)
 
 1. Open a Project → Project Knowledge
 2. Upload `SKILL.md` and `scripts/render.py`
-3. Upload room photos and start designing
+3. Upload a room photo and start designing
 
 ### Any LLM
 
-The `SKILL.md` is model-agnostic. Paste it into system instructions for any LLM that supports code execution. The `render.py` script calls Gemini's API regardless of which LLM orchestrates the workflow.
+`SKILL.md` is model-agnostic. Paste it into system instructions for any LLM that supports code execution. `render.py` calls Gemini's API regardless of which LLM orchestrates the workflow.
 
 ## Setup
 
-### 1. Get a Gemini API Key (free tier available)
+### 1. Get a Gemini API Key
 
-Go to [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey) and create a key.
+Free tier available at [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
 
 ### 2. Set Your Key
 
-**Option A:** Copy `.env.example` to `.env` and paste your key:
-
 ```bash
 cp .env.example .env
-# Edit .env and replace paste_your_key_here with your actual key
+# Edit .env and add your key
 ```
 
-**Option B:** Set as environment variable:
+Or set it directly:
 
 ```bash
 export GEMINI_API_KEY=your_key_here
@@ -85,29 +65,27 @@ export GEMINI_API_KEY=your_key_here
 pip install google-genai Pillow
 ```
 
-That's it. Upload a room photo and go.
+## What's in the Deck
 
-## Models Used
+| Slide | Content |
+|-------|---------|
+| 1. Title | Room photo background, room type + purpose |
+| 2. Before | Original photo, room type, size, condition |
+| 3. Analysis | Dimensions, light, materials, best asset, biggest problem |
+| 4. Concept | Style direction, 5-color palette, design narrative |
+| 5. After | Gemini-generated redesign rendering |
+| 6. Comparison | Before/after side by side with numbered annotations |
+| 7. Shopping list | Items ranked by impact with 3-tier pricing |
+| 8. Investment | Budget/recommended/premium tiers, payback periods |
 
-| Task | Model | Why |
-|------|-------|-----|
-| Room analysis | `gemini-2.5-flash` | Fast, great vision understanding, cost-efficient |
-| Image generation | `gemini-3-pro-image-preview` | Nano Banana Pro — reasoning-enhanced, up to 4K, best image quality |
+## Models
 
-## File Structure
+| Task | Model |
+|------|-------|
+| Room analysis | `gemini-2.5-flash` |
+| Image generation | `gemini-3-pro-image-preview` |
 
-```
-interior-vibing/
-├── SKILL.md           ← Instructions for Claude (the brain)
-├── scripts/
-│   └── render.py      ← Gemini API bridge (the hands)
-├── .env.example       ← API key template
-└── README.md          ← You are here
-```
-
-## Manual Usage (without Claude)
-
-The script works standalone:
+## Standalone Usage
 
 ```bash
 # Analyze a room
@@ -116,7 +94,7 @@ python scripts/render.py analyze --image room.jpg
 # Generate a redesign
 python scripts/render.py render \
   --image room.jpg \
-  --prompt "King bed with white linen bedding, oak nightstands, brass lamps, 9x12 ivory wool rug, large abstract art in earth tones above headboard" \
+  --prompt "King bed with white linen bedding, oak nightstands..." \
   --purpose "airbnb listing" \
   --style "warm scandinavian" \
   --resolution 2K \
@@ -125,19 +103,24 @@ python scripts/render.py render \
 # Edit specific areas
 python scripts/render.py edit \
   --image room.jpg \
-  --prompt "Replace the dated brass light fixture with a matte black pendant. Add white linen curtains." \
+  --prompt "Replace the brass fixture with a matte black pendant." \
   --resolution 2K
 ```
 
-All outputs go to `.stilo-output/` in your current directory.
+Outputs go to `.stilo-output/` in your working directory.
 
-## Philosophy
+## File Structure
 
-> Every recommendation must answer: "Why THIS item, in THIS room, for THIS purpose, at THIS price."
-
-- ❌ "Add a pop of color" → ✅ "Terracotta (#C65D3E) through a linen lumbar pillow and ceramic vase"
-- ❌ "Statement piece" → ✅ "40×30 abstract art in earth tones, centered 57 inches from floor"
-- ❌ "Modern bedroom" → ✅ 100+ word prompt referencing the room's actual floors, light, and architecture
+```
+interior-vibing/
+├── SKILL.md           ← Instructions for Claude
+├── scripts/
+│   └── render.py      ← Gemini API bridge
+├── assets/
+│   └── demo.gif       ← Demo walkthrough
+├── .env.example       ← API key template
+└── README.md
+```
 
 ## License
 
